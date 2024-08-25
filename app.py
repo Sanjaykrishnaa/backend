@@ -1,14 +1,19 @@
 from flask import Flask, request, jsonify, make_response
+from flask_cors import CORS
 from collections import OrderedDict
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/bfhl', methods=['POST'])
 def handle_post():
     try:
         data = request.json.get('data', [])
         
+        if not isinstance(data, list):
+            raise ValueError("Invalid data format")
+
         # Separate numbers and alphabets while preserving the order
         numbers = [item for item in data if item.isdigit()]
         alphabets = [item for item in data if item.isalpha()]
