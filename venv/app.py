@@ -9,30 +9,25 @@ def handle_post():
     try:
         data = request.json.get('data', [])
         
-        # Separate numbers and alphabets while preserving the order
+        if not isinstance(data, list):
+            return jsonify({"is_success": False, "error": "Invalid data format"}), 400
+        
         numbers = [item for item in data if item.isdigit()]
         alphabets = [item for item in data if item.isalpha()]
-        
-        # Find the highest lowercase alphabet
         lowercase_alphabets = [ch for ch in alphabets if ch.islower()]
         highest_lowercase_alphabet = max(lowercase_alphabets, default='', key=str.lower)
         
-        # Construct response using OrderedDict to maintain key order
         response = OrderedDict([
             ("is_success", True),
-            ("user_id", "john_doe_17091999"),  # Replace with actual user ID logic
-            ("email", "john@xyz.com"),  # Replace with actual email
-            ("roll_number", "ABCD123"),  # Replace with actual roll number
+            ("user_id", "john_doe_17091999"),
+            ("email", "john@xyz.com"),
+            ("roll_number", "ABCD123"),
             ("numbers", numbers),
             ("alphabets", alphabets),
             ("highest_lowercase_alphabet", [highest_lowercase_alphabet] if highest_lowercase_alphabet else [])
         ])
         
-        # Convert OrderedDict to JSON string to preserve key order
-        response_json = json.dumps(response)
-        
-        # Return response with appropriate headers
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return jsonify(response), 200
     
     except Exception as e:
         return jsonify({"is_success": False, "error": str(e)}), 400
